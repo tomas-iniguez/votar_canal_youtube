@@ -1,14 +1,25 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { HttpClientModule } from '@angular/common/http';
+
+import { APP_ROUTES } from './app.routes';
 
 import { AppComponent } from './app.component';
+import { NavbarComponent } from './components/navbar/navbar.component';
+import { VotarComponent } from './pages/votar/votar.component';
+import { GraficaComponent } from './pages/grafica/grafica.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    NavbarComponent,
+    VotarComponent,
+    GraficaComponent
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
+    HttpClientModule,
+    APP_ROUTES
   ],
   providers: [],
   bootstrap: [AppComponent]
