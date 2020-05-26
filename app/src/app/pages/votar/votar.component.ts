@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { YoutubeService } from '../../services/youtube.service';
+import { ApiFireBaseService } from '../../services/api-fire-base.service';
 import { Video } from '../../models/youtube.models';
 
 import Swal from 'sweetalert2';
@@ -15,8 +16,10 @@ export class VotarComponent implements OnInit {
   videos: Video[] = [];
   channelTitle = '';
   loading = true;
+  error   = false;
+  menssError = 'Por favor intentelo nuevamente';
 
-  constructor(private _youtubeService: YoutubeService) { }
+  constructor(private _youtubeService: YoutubeService, private _apiFireBaseService: ApiFireBaseService) { }
 
   ngOnInit(): void {
     this.cargarVideos();
@@ -30,7 +33,11 @@ export class VotarComponent implements OnInit {
          break;
      }
      this.loading = false;
-   });
+   }, (respEroor => {
+       this.loading    = false;
+       this.error      = true;
+     })
+   );
   }
   verVideo(video: Video) {
 
@@ -47,5 +54,46 @@ export class VotarComponent implements OnInit {
                 allowfullscreen>
               </iframe>`
       });
+  }
+  votarVideo( video: Video, like: number ) {
+    Swal.fire({
+      title: 'Espere',
+      text: 'mandando su información',
+      icon: 'info',
+      allowOutsideClick: false
+    });
+    Swal.showLoading();
+
+    const voto = {
+        videoId: video.resourceId.videoId,
+        title:   video.title,
+        like:    0,
+        dislike: 1
+    };
+    if ( like > 0 ) {
+        voto.like    = 1;
+        voto.dislike = 0;
+    }
+
+    this._apiFireBaseService.getVotar(voto).subscribe(  (resp: any) => {
+      if ( resp.estado ) {
+        Swal.fire({
+          title: 'Exito',
+          text: resp.mensaje,
+          icon: 'success',
+          showConfirmButton: true,
+        });
+      }
+    }, respError => {
+
+      Swal.fire({
+        title: 'Eroor',
+        text: respError.mensaje,
+        icon: 'error',
+        showConfirmButton: true,
+      });
+
+    }
+     );
   }
 }

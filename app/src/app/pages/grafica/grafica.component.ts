@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { AngularFirestore } from '@angular/fire/firestore';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-grafica',
@@ -7,70 +9,39 @@ import { Component, OnInit } from '@angular/core';
 })
 export class GraficaComponent implements OnInit {
 
-  results: any[] = 
-  [ 
-    {
-      "name": "Germany",
-      "series": [
-        {
-          "name": "like",
-          "value": 1111
-        },
-        {
-          "name": "deslike",
-          "value": 1
-        }
-      ]
-    },
-  
-    {
-      "name": "USA",
-      "series": [
-        {
-          "name": "like",
-          "value": 7870000
-        },
-        {
-          "name": "deslike",
-          "value": 8270000
-        }
-      ]
-    },
-  
-    {
-      "name": "France",
-      "series": [
-        {
-          "name": "like",
-          "value": 5000002
-        },
-        {
-          "name": "deslike",
-          "value": 5800000
-        }
-      ]
-    }
-  ];
+  loading = true;
+  error  = false;
+  menssError = 'Por favor intentelo nuevamente';
 
-  view: any[] = [700, 400];
+  results: any[] = [];
 
   // options
   showXAxis = true;
   showYAxis = true;
   gradient = false;
-  showLegend = true;
+  showLegend = false;
   showXAxisLabel = true;
-  xAxisLabel = 'Votos';
+  xAxisLabel = 'Videos';
   showYAxisLabel = true;
-  yAxisLabel = 'cantidad';
+  yAxisLabel = 'Votos';
 
   colorScheme = {
     domain: ['#007bff', '#dc3545']
   };
 
-  constructor() { }
+  constructor(private db: AngularFirestore) { }
 
   ngOnInit(): void {
+    this.db.collection('youtube').valueChanges().
+     pipe(map( (resp: any) => resp.map( ({ title, like, dislike }) => ( { name: title, series: [{name: 'like', value: like }, {name: 'dislike', value: dislike }]   } )  )  ))
+     .subscribe( resp =>  {
+       this.results = resp;
+       this.loading = false;
+      }, ( respError => {
+        this.error = true;
+        this.loading = false;
+         })
+      );
   }
 
 }

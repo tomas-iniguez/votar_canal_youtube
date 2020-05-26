@@ -1,2 +1,26 @@
-<ngx-charts-bar-vertical-2d [view]="view" [scheme]="colorScheme" [results]="results" [gradient]="gradient" [xAxis]="showXAxis" [yAxis]="showYAxis" [legend]="showLegend" [showXAxisLabel]="showXAxisLabel" [showYAxisLabel]="showYAxisLabel" [xAxisLabel]="xAxisLabel"
-    [yAxisLabel]="yAxisLabel"></ngx-charts-bar-vertical-2d>
+<div *ngIf="loading" class="animated fadeIn faster w-100 alert alert-info text-center mt-3 animated fadeIn faster" role="alert">
+    <h4 class="alert-heading">Cargando</h4>
+    <p>
+        <i class="fa fa-sync-alt fa-spin fa-2x"></i>
+    </p>
+    <p class="mb-0">
+        Espere por favor
+    </p>
+</div>
+
+<div *ngIf="!loading && error" class="w-100 alert alert-danger text-center mt-3 animated fadeIn faster" role="alert">
+    <h4 class="alert-heading">Error</h4>
+    <p>{{ menssError }}</p>
+</div>
+
+<div *ngIf="!loading && !error">
+    <h1 class="mt-3 font-weight-light animated fadeIn faster">Grafico de votos</h1>
+    <hr>
+    <div class="mb-2">
+        <span class="badge badge-primary m-1"><i class="fas fa-thumbs-up"> Like</i></span>
+        <span class="badge badge-danger"><i class="fas fa-thumbs-down"> Dislike</i></span>
+    </div>
+    <div class="text-center chart-container animated fadeIn faster">
+        <ngx-charts-bar-vertical-2d [scheme]="colorScheme" [results]="results" [gradient]="gradient" [xAxis]="showXAxis" [yAxis]="showYAxis" [legend]="showLegend" [showXAxisLabel]="showXAxisLabel" [showYAxisLabel]="showYAxisLabel" [xAxisLabel]="xAxisLabel" [yAxisLabel]="yAxisLabel"></ngx-charts-bar-vertical-2d>
+    </div>
+</div>
